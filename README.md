@@ -12,3 +12,9 @@ Conserved_Peaks.R
 
 ## Custom code for identification of enhancer and promoters ##
 Promoter_enhancer.R
+
+## Seurat objects for scRNA-seq
+
+
+## Arrow files / fragments for scATAC-seq
+
