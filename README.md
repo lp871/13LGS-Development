@@ -7,8 +7,8 @@ Evolutionary adaptation to diurnal vision in ground squirrels has led to the dev
 ## custom code for GRNs ##
 13LGS_GRNs.R
 
-## custom code for conversed peaks between Mouse and 13LGS ##
+## Custom code for conversed peaks between Mouse and 13LGS ##
 Conserved_Peaks.R
 
-## custom code for identification of enhancer and promoters ##
+## Custom code for identification of enhancer and promoters ##
 Promoter_enhancer.R
