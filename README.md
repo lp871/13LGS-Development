@@ -11,10 +11,10 @@ Evolutionary adaptation to diurnal vision in ground squirrels has led to the dev
 Conserved_Peaks.R
 
 ## Seurat objects for 13LGS scRNA-seq
-Figure1: [Google folder](<PASTE_LINK_FOR_scRNA_FIG1>)
+Figure1: [Google folder]([<PASTE_LINK_FOR_scRNA_FIG1>](https://drive.google.com/drive/folders/1FhiYgPFoozdCC7K9faUnodudHMJ0wUPC?usp=drive_link))
 
-Figure2: [Google folder](<PASTE_LINK_FOR_scRNA_FIG2>)
+Figure2: [Google folder]([<PASTE_LINK_FOR_scRNA_FIG2>](https://drive.google.com/drive/folders/1GgnCBzhnLMVri3fF769PYjNttAhI17Jl?usp=drive_link))
 
 ## Arrow files / fragments for 13LGS scATAC-seq
-Figure1: [Google folder](<PASTE_LINK_FOR_scATAC_FIG1>)
+Figure1: [Google folder]([<PASTE_LINK_FOR_scATAC_FIG1>](https://drive.google.com/drive/folders/1cDkZ4kqeT4jU_diIJ_56bAn5gCWpRf_K?usp=drive_link))
 
