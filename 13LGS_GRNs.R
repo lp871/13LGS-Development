@@ -1,5 +1,5 @@
 #######
-####### ########### 
+####### load gene-gene correlation results ########### 
 #######
 
 library(data.table)
@@ -79,9 +79,130 @@ saveRDS(LGS13_total_GRNs_add,file="LGS13_total_GRNs_add_Jan2025")
 
 #######
 ####### example code for cell type specific footprint signals ########
-####### Add_score_to_the_motifs 
+####### Add_score_to_the_motifs: calculate single-cell bw signal for each motif region
 #######
+########
+######## peaks peak GRanges #######
+######## PWM_list ######
+########
 
+
+Match_Motif_to_Peaks <- function(peaks,PMW_list,Genome="mm10"){
+    ##########
+    library(motifmatchr)
+    library(parallel)
+    ##########
+    if(Genome=="mm10"){
+        library('BSgenome.Mmusculus.UCSC.mm10.masked')
+        res_list <- mclapply(PMW_list, function(x) {
+            matchMotifs(
+                pwms = x,
+                subject = peaks,
+                genome = BSgenome.Mmusculus.UCSC.mm10.masked,
+                out = "positions",
+                p.cutoff = 5e-05
+            )
+        }, mc.cores = 30)
+    }
+    ##########
+    if(Genome=="13LGS"){
+        library("BSgenome.Itridecemlineatus.Bustamante.13LGSHiRise")
+        res_list <- mclapply(PMW_list, function(x) {
+            matchMotifs(
+                pwms = x,
+                subject = peaks,
+                genome = BSgenome.Itridecemlineatus.Bustamante.13LGSHiRise,
+                out = "positions",
+                p.cutoff = 5e-05
+            )
+        }, mc.cores = 30)
+    }
+    ##########
+    return(res_list)
+}
+
+
+
+
+
+########
+######## Match_Motif_to_Peaks outputs #########
+########
+
+Check_normalized_Signal <- function(x,temp_bw){
+    library(GenomicRanges)
+	library(rtracklayer)
+	temp_bw = temp_bw
+	### print(summary(width(temp_bw)))
+    ### for each Hints, see the footprint score ####
+    ### 将 ATAC GRanges 转为覆盖度 (RleList) #######
+    ### not work ####
+    x = x[[1]]
+    x = x[which(x$score > 2)]
+    ###
+    flank_size = width(x)*3
+    c_start <- start(x)
+    c_end   <- end(x)
+    lf_start <- c_start - flank_size
+    lf_end   <- c_start - 1
+    rf_start <- c_end + 1
+    rf_end   <- c_end + flank_size
+    ####
+    GR_mid = GRanges(seqnames=seqnames(x),IRanges(c_start,c_end))
+    GR_left = GRanges(seqnames=seqnames(x),IRanges(lf_start,lf_end))
+    GR_right = GRanges(seqnames=seqnames(x),IRanges(rf_start,rf_end))
+    ####
+    Get_score <- function(x,y){
+        library(GenomicRanges)
+        res = findOverlaps(x,y)
+        res = data.frame(res)
+        res$score = y$score[res$subjectHits]
+        #### add sums ####
+        res_sum = tapply(res$score,res$queryHits,sum)
+        ####
+        x$score = 0
+        x$score[as.numeric(names(res_sum))] = as.numeric(res_sum)
+        return(x)
+    }
+    #####
+    GR_mid = Get_score(GR_mid,temp_bw)
+    GR_left = Get_score(GR_left,temp_bw)
+    GR_right = Get_score(GR_right,temp_bw)
+    #####
+    GR_mid$score = GR_mid$score / c(width(x))
+    GR_left$score = GR_left$score / c(width(x)*3)
+    GR_right$score = GR_right$score / c(width(x)*3)
+    #####
+    GR_mid$left = GR_left$score
+    GR_mid$right = GR_right$score
+    #####
+    return(GR_mid)
+}
+
+
+########
+######## file is the path of the signal file #########
+######## matchtopeaks_list is the output of the Check_normalized_Signal ##########
+########
+
+
+Add_score_to_the_motifs <- function(file,matchtopeaks_list){
+    ##########
+    library(parallel)
+    ##########
+    library(rtracklayer)
+    temp_bw = import.bw(file)
+    res_list <- mclapply(matchtopeaks_list,Check_normalized_Signal,temp_bw=temp_bw,mc.cores = 30)
+    ########## length(res_list) #######
+    names(res_list) <- names(matchtopeaks_list)
+    ####
+    res_list2 = GRangesList(res_list)
+    res_list3 = unlist(res_list2)
+    return(res_list3)
+}
+
+##########
+##########
 
 source("/zp1/data/plyu3/All_Functions_2025/R/source_all.R")
 source_all_r("/zp1/data/plyu3/All_Functions_2025/R/")
@@ -105,12 +226,9 @@ file = "/zp1/data/plyu3/Old_Server_Data/plyu3/LGS_13_NEW/LGS_Photo_BC_res/LGS_Ph
 LGS_Photo_BC_footprint_res = Add_score_to_the_motifs(file,LGS13_Motif_matchtopeaks)
 saveRDS(LGS_Photo_BC_footprint_res,file="LGS_Photo_BC_footprint_res_2024")
 
-########
-print("Done!!!!")
-########
 
 #######
-####### function for integrate footprint PeaktoGene and GG correlations ######
+####### integrate footprint PeaktoGene and GG correlations ######
 #######
 
 Add_foot_print_to_peak <- function(footprint,TAG,Peak_to_Gene_add,LGS_motif_tf_table,total_GRNs_add,Avg_Mat){
