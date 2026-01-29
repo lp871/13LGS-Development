@@ -18,3 +18,10 @@ Figure2: [Google folder](https://drive.google.com/drive/folders/1GgnCBzhnLMVri3f
 ## Arrow files / fragments for 13LGS scATAC-seq
 Figure1: [Google folder](https://drive.google.com/drive/folders/1cDkZ4kqeT4jU_diIJ_56bAn5gCWpRf_K?usp=drive_link)
 
+
+## Related paper
+
+This code accompanies the eLife paper:
+Weir, K., Lyu, P., Kandoi, S., An, R., Pannullo, N., Palazzo, I., Tangeman, J.A., Shi, J., DeVries, S.H., Merriman, D.K. and Qian, J., 2026. Heterochronic transcription factor expression drives cone-dominant retina development in 13-lined ground squirrels. eLife, 14.
+
+
